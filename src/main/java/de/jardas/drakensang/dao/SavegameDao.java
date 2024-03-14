@@ -6,6 +6,7 @@ import de.jardas.drakensang.model.savegame.Savegame;
 import de.jardas.drakensang.util.WindowsRegistry;
 
 import org.apache.commons.io.FileUtils;
+import org.omg.CORBA.Environment;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -78,6 +79,15 @@ public class SavegameDao {
     }
 
     public static File getSavesDirectory() {
+        String savePathEnv = System.getenv("DRAKENSANG_SAVES");
+        if (savePathEnv != null) {
+            try {
+                return new File(savePathEnv);
+            } catch (Exception ex) {
+                throw new DrakensangException("Environment variable DRAKENSANG_SAVE_PATH does not contain a valid path: " + savePathEnv);
+            }
+        }
+
         File documentsDir = new File(WindowsRegistry.getCurrentUserPersonalFolderPath());
         File savedir = new File(documentsDir,
                 "Drakensang/profiles/default/save/");
